@@ -1,0 +1,19 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hello", "Hey", "Good morning", "What's up"],
+      "responses": ["Hello! How can I help you today?", "Hi there!", "Greetings!"]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "See you later", "Goodbye", "Catch you later"],
+      "responses": ["Goodbye!", "See you later!", "Have a great day!"]
+    },
+    {
+      "tag": "capabilities",
+      "patterns": ["What can you do?", "How can you help me?", "What are your features?"],
+      "responses": ["I can classify text, images, and audio! I am a multi-modal trainable AI.", "I'm VYOMA AI, I help you with AI classification tasks."]
+    }
+  ]
+}
