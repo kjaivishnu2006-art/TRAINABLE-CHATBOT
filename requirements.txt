@@ -1,5 +1,26 @@
+# Core API
 fastapi
-uvicorn
+uvicorn[standard]
+pydantic
+
+# AI / ML - Text Chatbot
 sentence-transformers
 faiss-cpu
 numpy
+
+# Flask Routes (training pipeline routes)
+flask
+werkzeug
+
+# ML Utilities
+scikit-learn
+joblib
+
+# Audio ML
+librosa
+
+# Vision ML (optional - heavy dependency)
+# tensorflow
+
+# Testing
+pytest

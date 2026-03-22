@@ -3,7 +3,7 @@ import json
 import random
 import numpy as np
 import faiss
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer # Trigger IDE re-analysis
 
 class VyomaChatbotEngine:
     """

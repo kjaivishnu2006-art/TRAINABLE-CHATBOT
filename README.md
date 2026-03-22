@@ -227,7 +227,7 @@ When a user says "Hi", the bot randomly picks one of these responses to send bac
 
 ### 10.2 Real Dataset Example
 
-Here's the complete default dataset (stored in [`backend/data/intents.json`](backend/data/intents.json)):
+Here's the complete default dataset (stored in [`ai-model/dataset.json`](ai-model/dataset.json)):
 
 ```json
 {
@@ -283,7 +283,7 @@ You can easily add your own intents to teach Vyoma AI new conversation topics.
 
 **Example: Adding a "Help" intent**
 
-Edit `backend/data/intents.json` and add this new intent:
+Edit `ai-model/dataset.json` and add this new intent:
 
 ```json
 {
@@ -310,7 +310,7 @@ python ai-model/train.py
 ```
 
 This command:
-1. Reads all intents from `backend/data/intents.json`
+1. Reads all intents from `ai-model/dataset.json`
 2. Converts all patterns into semantic embeddings (mathematical vectors)
 3. Creates a FAISS index for fast similarity matching
 4. Saves the model for production use
@@ -332,6 +332,23 @@ This command:
 ---
 
 ## 11. 📊 Evaluation
+
+### 11.0 Quick Evaluation Summary
+
+**Sample Results on Predefined Dataset:**
+
+| Input | Output |
+|------|--------|
+| `hello` | Hi there! |
+| `bye` | Goodbye! |
+
+**Key Performance Metrics:**
+- **Response Time:** ~150–300 ms
+- **Test Dataset:** Predefined intents (greeting, goodbye, capabilities)
+- **Reliability:** ✅ Consistent performance on intent-based queries
+- **Accuracy:** 91% on semantic intent matching
+
+---
 
 ### 11.1 Sample Test Cases
 
@@ -369,11 +386,11 @@ Performance benchmarks were measured on a standard 8-core CPU laptop (Intel i7-8
 ### 11.3 Accuracy Explanation
 
 #### Semantic Similarity Scoring
-Vyoma AI uses **cosine similarity** on TF-IDF vectorized text embeddings to match user input against trained intents. The similarity score ranges from 0 to 1:
+Vyoma AI uses **SentenceTransformers** (`all-MiniLM-L6-v2`) to encode text into 384-dimensional vector embeddings, then performs **FAISS L2 nearest-neighbor search** to match user input against trained intents. The L2 distance determines match quality:
 
-- **Score ≥ 0.80**: High confidence match → Return the intent response directly
-- **Score 0.50-0.79**: Medium confidence → Can be used with optional user confirmation
-- **Score < 0.50**: Low confidence → Return fallback message to prevent false positives
+- **Distance ≤ 0.80**: High confidence match → Return the intent response directly
+- **Distance 0.80–1.45**: Medium confidence → Return best match with lower certainty
+- **Distance > 1.45**: Low confidence → Return fallback message to prevent false positives
 
 #### Real-World Accuracy Metrics
 Based on evaluation against 100 manually curated test queries:
@@ -387,7 +404,7 @@ Based on evaluation against 100 manually curated test queries:
 | **Overall Classification Accuracy** | **91%** |
 
 #### Why Semantic Matching Wins
-Unlike brittle regex patterns that fail on minor variations ("Hi" won't match "Hey"), Vyoma AI understands *semantic meaning*. The model learns that these patterns convey identical intent:
+Unlike brittle regex patterns that fail on minor variations ("Hi" won't match "Hey"), Vyoma AI understands *semantic meaning*. The SentenceTransformer model maps text into geometric vector space where semantically similar phrases are mathematically close:
 - "Hello" ↔ "Hi" ↔ "Greetings" ↔ "What's up" (all map to the `greeting` intent)
 - "Goodbye" ↔ "See you later" ↔ "Catch you later" ↔ "Bye" (all map to the `goodbye` intent)
 
@@ -415,7 +432,7 @@ pytest backend/tests/ --cov=backend/services --cov-report=html
 
 2. **Send test requests via the `/chat` endpoint:**
    ```bash
-   curl -X POST http://localhost:5000/chat \
+   curl -X POST http://localhost:8000/chat \
      -H "Content-Type: application/json" \
      -d '{"message": "Hello there!"}'
    ```
@@ -430,11 +447,11 @@ Use Apache JMeter or `locust` for concurrent request validation:
 
 ```bash
 # Example: 100 concurrent requests over 30 seconds
-locust -f backend/tests/load_test.py --host=http://localhost:5000
+locust -f backend/tests/load_test.py --host=http://localhost:8000
 ```
 
 #### Retraining & Evaluation Loop
-After adding new intents to `backend/data/intents.json`:
+After adding new intents to `ai-model/dataset.json`:
 
 ```bash
 # Retrain the FAISS index
@@ -507,12 +524,12 @@ Start the backend:
 ```bash
 cd backend
 python app.py
-# Backend runs on http://localhost:5000
+# Backend runs on http://localhost:8000
 ```
 
 Test the `/chat` endpoint:
 ```bash
-curl -X POST http://localhost:5000/chat \
+curl -X POST http://localhost:8000/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "What can you do?"}'
 ```
@@ -547,7 +564,7 @@ This demo illustrates how Vyoma AI **integrates natively into MIT App Inventor p
 1. Open MIT App Inventor and create a new project
 2. Add a **TextBox** for user input
 3. Add a **Label** to display bot responses
-4. Add a **Web** component and set URL to `http://your-backend:5000/chat`
+4. Add a **Web** component and set URL to `http://your-backend:8000/chat`
 5. Use **JsonTextDecode** to parse the API response
 6. Display the `reply` field in the Label
 
@@ -558,30 +575,13 @@ This demo illustrates how Vyoma AI **integrates natively into MIT App Inventor p
 
 ### 12.4 Full Demo Video
 
-Watch a complete end-to-end walkthrough of Vyoma AI in action:
+> 🎬 **Demo video is being recorded and will be linked here before the final GSoC submission deadline.**
 
-**🎬 [Link to Live Demo Video (coming soon)](https://www.youtube.com/)**
-
-*The demo video includes:*
-- ✅ Training a custom intents dataset (3:15 mark)
-- ✅ Testing the chatbot via the web UI (5:42 mark)
-- ✅ Making API calls with curl (8:15 mark)
-- ✅ Integrating into MIT App Inventor (12:00 mark)
-- ✅ Running on a mobile device (15:30 mark)
-
----
-
-### 12.5 Interactive Demo Playground
-
-Want to test Vyoma AI without installing anything? Visit our live demo:
-
-**🌐 [Try the Live API Playground](https://vyoma-ai-demo.example.com)**
-
-*This playground lets you:*
-- Send custom messages to the trained model
-- View real-time similarity scores
-- See the matched intent and confidence level
-- Export test results as JSON
+The video will cover:
+- Training a custom intents dataset
+- Testing the chatbot via the web UI
+- Making API calls with curl
+- Integrating into MIT App Inventor
 
 ---
 
