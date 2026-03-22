@@ -22,7 +22,8 @@ class VyomaChatbotEngine:
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
         
         # Internal state variables mapping the FAISS index strictly with our string answers
-        self.index = None
+        import typing
+        self.index: 'typing.Any' = None
         self.metadata = []
         
         self._build_index()
