@@ -1,0 +1,19 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hello", "Hi", "Hey there", "Greetings"],
+      "responses": ["Hello! How can I help you today?"]
+    },
+    {
+      "tag": "capabilities",
+      "patterns": ["What can you do?", "Explain your features", "How do you work?"],
+      "responses": ["I process intents using HuggingFace SentenceTransformers and FAISS vector lookup for MIT App Inventor!"]
+    },
+    {
+      "tag": "creator",
+      "patterns": ["Who made you?", "Who is your creator?"],
+      "responses": ["I am a GSoC project built for MIT App Inventor!"]
+    }
+  ]
+}

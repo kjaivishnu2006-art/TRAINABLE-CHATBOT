@@ -1,190 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VYOMA AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Vyoma AI | GSoC Platform Demo</title>
+    <!-- Google Fonts for Modern Appearance -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
+    <!-- Abstract Glow Elements -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <nav class="glass-nav">
+        <div class="nav-content">
             <div class="logo">
                 <i class="ph-fill ph-planet"></i>
-                <h2>VYOMA AI</h2>
+                <span>Vyoma AI Studio</span>
             </div>
-            <nav class="tabs">
-                <button class="tab-btn active" data-target="chatbot">
-                    <i class="ph ph-chat-teardrop-text"></i> Chatbot Base
-                </button>
-                <button class="tab-btn" data-target="image-classifier">
-                    <i class="ph ph-image"></i> Image Classifier
-                </button>
-                <button class="tab-btn" data-target="audio-classifier">
-                    <i class="ph ph-waveform"></i> Audio Classifier
-                </button>
-            </nav>
+            <a href="https://github.com/kjaivishnu2006-art/TRAINABLE-CHATBOT" target="_blank" class="github-link"><i class="ph ph-github-logo"></i> GitHub</a>
+        </div>
+    </nav>
 
-            <div class="sidebar-footer">
-                <p><i class="ph ph-heart"></i> Built for MIT App Inventor</p>
-                <p>Status: <span class="status-dot"></span> Backend Ready</p>
+    <main class="demo-section">
+        <div class="demo-content">
+            <h2>GSoC Chatbot <span class="gradient-text">Live Demo</span></h2>
+            <p>Powered by FastAPI, SentenceTransformers, and FAISS vector lookup.</p>
+            
+            <div class="live-chat-wrapper glass-panel">
+                <div class="chat-header">
+                    <i class="ph-fill ph-robot"></i>
+                    <div>
+                        <h4>Vyoma AI Engine</h4>
+                        <span class="status-indicator">Routing to FastAPI</span>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot slide-in">
+                        Hello! I am connected to the Vyoma FAISS memory bank. Try asking me "What can you do?" or "Who built this project?". Ensure `backend/app.py` is running on port 8000!
+                    </div>
+                </div>
+                
+                <div class="chat-inputBox">
+                    <input type="text" id="chat-query" placeholder="Interact with embeddings..." autocomplete="off"/>
+                    <button id="send-btn" class="send-btn"><i class="ph-bold ph-paper-plane-right"></i></button>
+                </div>
             </div>
-        </aside>
+        </div>
+    </main>
 
-        <!-- Main Workspace Area -->
-        <main class="content-area">
-
-            <!-- 1. Text Chatbot View -->
-            <section id="chatbot" class="view-section active">
-                <div class="header">
-                    <h1>Text Intent Trainer</h1>
-                    <p>Build custom conversational logic using TF-IDF matching and JSON payloads.</p>
-                </div>
-
-                <div class="split-view">
-                    <!-- Train View -->
-                    <div class="card glass">
-                        <h3><i class="ph ph-book-open"></i> Add Intent Data</h3>
-                        <div class="form-group">
-                            <label>Intent Tag</label>
-                            <input type="text" id="chat-tag" placeholder="E.g., greeting">
-                        </div>
-                        <div class="form-group">
-                            <label>Training Patterns (comma separated)</label>
-                            <textarea id="chat-patterns" placeholder="Hi, Hello, Hey there..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Bot Responses (comma separated)</label>
-                            <textarea id="chat-responses" placeholder="Hello! How can I help?, Hi!"></textarea>
-                        </div>
-                        <button class="btn primary flush" onclick="trainChat()">Train NLP Model</button>
-                    </div>
-
-                    <!-- Predict View -->
-                    <div class="card glass">
-                        <h3><i class="ph ph-lightning"></i> Test Bot</h3>
-                        <div class="chat-window">
-                            <div class="messages" id="chat-messages">
-                                <div class="msg ai">Hello! I'm your trainable assistant. Deploy your model first.</div>
-                            </div>
-                            <div class="chat-input-area">
-                                <input type="text" id="chat-query" placeholder="Test your query...">
-                                <button class="btn icon-btn" onclick="testChat()"><i
-                                        class="ph ph-paper-plane-right"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. Image Classifier View -->
-            <section id="image-classifier" class="view-section">
-                <div class="header">
-                    <h1>Vision Trainer</h1>
-                    <p>Powered by MobileNetV2 Extractor & Support Vector Machines.</p>
-                </div>
-
-                <div class="split-view">
-                    <!-- Dataset Manager -->
-                    <div class="card glass">
-                        <h3><i class="ph ph-database"></i> Image Dataset Manager</h3>
-                        <div class="form-group">
-                            <label>Dataset Identifier</label>
-                            <input type="text" id="img-dataset-id" placeholder="project_vision_1">
-                        </div>
-                        <div class="form-group">
-                            <label>Target Class Label (e.g., Cat, Dog)</label>
-                            <input type="text" id="img-class-label" placeholder="Cat">
-                        </div>
-                        <div class="upload-box" id="img-dropzone">
-                            <i class="ph ph-images"></i>
-                            <p>Upload labeled batch (Supported: JPG, PNG)</p>
-                            <input type="file" id="img-file" multiple hidden accept="image/*">
-                        </div>
-                        <div class="action-row">
-                            <button class="btn secondary" style="flex:1" onclick="uploadImage()"><i
-                                    class="ph ph-upload-simple"></i> Upload</button>
-                            <button class="btn primary" style="flex:1" onclick="trainImage()"><i class="ph ph-cpu"></i>
-                                Train SVM</button>
-                        </div>
-                    </div>
-
-                    <!-- Inference Engine -->
-                    <div class="card glass">
-                        <h3><i class="ph ph-scan"></i> Inference Engine</h3>
-                        <div class="upload-box test-box" id="img-test-dropzone">
-                            <img id="img-preview" src="" style="display:none;" />
-                            <i class="ph ph-camera" id="img-icon-preview"></i>
-                            <p id="img-text-preview">Select an image to test</p>
-                            <input type="file" id="img-test-file" hidden accept="image/*">
-                        </div>
-                        <button class="btn secondary flush" onclick="predictImage()"><i class="ph ph-play"></i> Run
-                            Prediction</button>
-                        <div class="results-box" id="img-results">
-                            <!-- JSON populated here -->
-                            <span class="placeholder-text">Prediction probabilities will appear here...</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3. Audio Classifier View -->
-            <section id="audio-classifier" class="view-section">
-                <div class="header">
-                    <h1>Audio Identifier</h1>
-                    <p>Librosa MFCC Extraction overlaid with K-Nearest Neighbors.</p>
-                </div>
-
-                <div class="split-view">
-                    <!-- Upload -->
-                    <div class="card glass">
-                        <h3><i class="ph ph-waveform"></i> Audio Dataset Manager</h3>
-                        <div class="form-group">
-                            <label>Dataset Identifier</label>
-                            <input type="text" id="audio-dataset-id" placeholder="project_sonic_1">
-                        </div>
-                        <div class="form-group">
-                            <label>Target Class Label (e.g., Siren)</label>
-                            <input type="text" id="audio-class-label" placeholder="Siren">
-                        </div>
-                        <div class="upload-box">
-                            <i class="ph ph-file-audio"></i>
-                            <p>Upload labeled sample (.WAV only)</p>
-                            <input type="file" id="audio-file" accept=".wav">
-                        </div>
-                        <div class="action-row">
-                            <button class="btn secondary" style="flex:1" onclick="uploadAudio()"><i
-                                    class="ph ph-upload-simple"></i> Upload</button>
-                            <button class="btn primary" style="flex:1" onclick="trainAudio()"><i class="ph ph-cpu"></i>
-                                Train KNN</button>
-                        </div>
-                    </div>
-
-                    <!-- Inference -->
-                    <div class="card glass">
-                        <h3><i class="ph ph-ear"></i> Inference Engine</h3>
-                        <div class="upload-box test-box">
-                            <i class="ph ph-microphone-stage"></i>
-                            <p>Select test recording (.WAV)</p>
-                            <input type="file" id="audio-test-file" accept=".wav">
-                        </div>
-                        <button class="btn secondary flush" onclick="predictAudio()"><i class="ph ph-play"></i> Run
-                            Prediction</button>
-                        <div class="results-box" id="audio-results">
-                            <span class="placeholder-text">Prediction probabilities will appear here...</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+    <footer class="glass-footer">
+        <p>© 2026 Google Summer of Code - Built for MIT App Inventor</p>
+    </footer>
 
     <script src="app.js"></script>
 </body>
-
 </html>

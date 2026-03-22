@@ -1,28 +1,51 @@
-# System Architecture
+# Vyoma AI: System Architecture
 
-## Overview
-VYOMA AI is a modular, high-performance Multi-Modal Trainable AI Platform engineered as a decoupled micro-monolith. The ecosystem is designed to be highly accessible for MIT App Inventor integrations while maintaining production-grade robustness.
+The core of the Vyoma AI Trainable Chatbot is separating the heavy NLP matrix computations from the rapid application delivery API layer. This decoupling allows MIT App Inventor developers to consume the platform reliably.
 
-## Core Components
+## Complete System Flow 
 
-### 1. The Gateway (FastAPI)
-The central nervous system of VYOMA AI. 
-- **Role**: Handles highly concurrent I/O operations, stream multiplexing of large file uploads (images and audio), and acts as a router.
-- **Why FastAPI?**: Because of its native asynchronous architecture. AI inference and training usually block event loops; FastAPI ensures that concurrent MIT App Inventor clients are serviced instantly while ML jobs execute asynchronously in the background.
+### 1. The Knowledge Representation (Database Phase)
+Users define their desired logic purely inside `ai-model/dataset.json`. The engine processes these dictionaries asynchronously rather than relying on bloated SQL databases, maximizing speed for small-to-medium datasets.
 
-### 2. Multi-Modal Machine Learning Modules
-Isolated "Trainer" and "Inference" modules adhering strictly to SOLID principles.
+### 2. Semantic Embedding (The AI Phase)
+Running `ai-model/train.py` calls HuggingFace's `SentenceTransformer` (`all-MiniLM-L6-v2`) locally to vector encode strings into a matrix. It then boots up `faiss-cpu`, compiling a Flat L2 geometric index map representing the knowledge boundaries.
+- **Artifacts Generated:** `chatbot_index.faiss` and `metadata.pkl`.
 
-* **Text Module (NLP):**
-  - Consumes JSON strings. Uses `scikit-learn`'s `TfidfVectorizer` and Cosine Similarity to construct dialogue intent graphs. Extremely lightweight and fast.
-* **Vision Module (CNN Extraction):**
-  - Consumes `.jpg` and `.png` blobs. Incorporates a headless `MobileNetV2` neural network via TensorFlow to compute deep dimensional feature maps. These maps are cached and evaluated against a lightweight Support Vector Machine (SVC).
-* **Audio Module (Time-Series Extractor):**
-  - Consumes `.wav` blobs. Uses the `librosa` library to map waveform frequencies into 1D Mel-frequency cepstral coefficients (MFCCs). These coefficients are evaluated by a K-Nearest Neighbor (KNN) cluster network.
+### 3. FastAPI Gateway (The Backend Phase)
+`backend/app.py` exposes the `POST /chat` route wrapped by ASGI protocols (via Uvicorn). The internal `backend/chatbot.py` script waits for requests, takes the string, dynamically vector-encodes it via the AI Phase models, queries the FAISS index, retrieves the Nearest Neighbor inference, and parses it cleanly.
 
-### 3. Persistent Storage Layer
-- **Datasets**: Physical `.jpg` and `.wav` file structures organized dynamically on the Server (`/data/{modality}/{project_id}/{class_label}/items`).
-- **Models**: Saved securely into stateful artifacts via `joblib` (`classifier.joblib`, `vectorizer.joblib`), ensuring extreme portability and offline caching capabilities for the App Inventor extension layer.
+### 4. Client Consumption (The Frontend Phase)
+Two main consumers exist:
+1. `frontend/index.html` via `app.js` which natively uses `fetch()` logic to append chatbot answers cleanly onto the DOM.
+2. MIT App Inventor applications via native Web component blocks parsing the exact same JSON.
 
-## The Scaling Strategy (Fast-Training)
-By heavily utilizing feature caching (e.g., passing a fresh image through MobileNetV2 *once* during upload to extract vectors), the architecture compresses neural network epoch training from minutes to bare milliseconds. This bypasses the need for powerful, expensive GPU clusters and democratizes AI training scaling for all educational users.
+---
+### Text Format High-Level Diagram
+
+```text
+       [ MIT App Inventor / Frontend Web UI ]
+                       |
+               (HTTP POST /chat)
+                       |
+                       v
+             [ FastAPI Backend Engine ] 
+             (Parses { "message": ... })
+                       |
+                       v
+         [ Inference Engine (chatbot.py) ]
+      (Generates 384-dimensional Vector Query)
+                       |
+                       v
+[============= FAISS Flat L2 Index ===============]
+|  Calculates closest Cosine/Euclidian Distance |
+|  Finds Exact `Tag` Metadata inside `.pkl`     |
+[==============================================]
+                       |
+                       v
+               (Matches Best Response)
+                       |
+             [ FastAPI Backend Engine ]
+          (Returns { "reply": ... })
+                       |
+       [ MIT App Inventor / Frontend Web UI ]
+```

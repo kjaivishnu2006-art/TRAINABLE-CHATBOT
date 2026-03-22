@@ -1,48 +1,49 @@
-import os
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import logging
-from flask import Flask, jsonify
-from config import config
-from routes.text_routes import text_bp
-from routes.image_routes import image_bp
-from routes.audio_routes import audio_bp
 
-# Configure global logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+try:
+    from chatbot import get_response
+except ImportError:
+    # Handle the fact that we might be run from root or from backend folder
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from chatbot import get_response
 
-def dict_error_response(app):
-    @app.errorhandler(400)
-    def bad_request(error):
-        return jsonify({'error': 'Bad Request', 'message': str(error)}), 400
 
-    @app.errorhandler(404)
-    def not_found(error):
-        return jsonify({'error': 'Not Found', 'message': str(error)}), 404
+logging.basicConfig(level=logging.INFO)
 
-    @app.errorhandler(500)
-    def internal_server_error(error):
-        return jsonify({'error': 'Internal Server Error', 'message': str(error)}), 500
+app = FastAPI(
+    title="Vyoma AI Engine",
+    description="GSoC FastAPI gateway for MIT App Inventor."
+)
 
-def create_app(config_name='default'):
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    # Ensure upload directory exists
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+class RequestPayload(BaseModel):
+    message: str
 
-    # Register error handlers
-    dict_error_response(app)
+@app.post("/chat")
+async def process_chat(payload: RequestPayload):
+    try:
+        reply = get_response(payload.message)
+        return {"reply": reply}
+    except Exception as e:
+        logging.error(f"Chat error: {e}")
+        raise HTTPException(status_code=500, detail="Internal AI Error")
 
-    # Register Blueprints
-    app.register_blueprint(text_bp, url_prefix='/api/v1/text')
-    app.register_blueprint(image_bp, url_prefix='/api/v1/image')
-    app.register_blueprint(audio_bp, url_prefix='/api/v1/audio')
+@app.get("/health")
+async def health():
+    return {"status": "operational", "system": "Vyoma GSoC Backend"}
 
-    @app.route('/health')
-    def health_check():
-        return jsonify({"status": "healthy", "service": "VYOMA AI Backend"})
-
-    return app
-
-if __name__ == '__main__':
-    app = create_app(os.environ.get('FLASK_ENV', 'default'))
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
