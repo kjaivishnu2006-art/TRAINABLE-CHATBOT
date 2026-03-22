@@ -70,11 +70,12 @@ Running `ai-model/train.py` calculates 384-dimensional geometric vectors for the
 ![Chatbot Interface Placeholder](docs/screenshots/chat_ui.png "Chat UI Visuals")
 
 ## 12. Roadmap (Timeline)
-- **Phase 1 (Week 1-3)** → Basic chatbot logic drafting and repository setup.
-- **Phase 2 (Week 4-6)** → Training system engineering and model curation.
-- **Phase 3 (Week 7-9)** → Semantic search overhaul via FAISS inclusion.
-- **Phase 4 (Week 10-11)** → App Inventor integration optimization and block generation.
-- **Phase 5 (Week 12)** → UI deployment, intense endpoint testing, and final writeup.
+- **Phase 1 (Community Bonding)** → Environment setup & CI/CD architecture.
+- **Phase 2 (Core AI - Weeks 1-3)** → Building SentenceTransformers logic & FAISS mapping (~90 hours).
+- **Phase 3 (Backend - Weeks 4-5)** → FastAPI routing & rigorous error handling (~60 hours).
+- **Phase 4 (App Inventor - Weeks 6-8)** → Test `.aia` blocks & integration docs (~90 hours).
+- **Phase 5 (Frontend - Weeks 9-10)** → UI finalization & JavaScript fetch optimization (~60 hours).
+- **Phase 6 (Finals - Weeks 11-12)** → Testing, bug squashing, & final GSoC report (~20 hours).
 
 ## 13. Future Scope
 Beyond GSoC, the AI model structure is robust enough to eventually support real-time audio (speech-to-text) classifications alongside the existing Text NLP logic, acting as an entirely complete multi-modal brain for educational mobile development.
