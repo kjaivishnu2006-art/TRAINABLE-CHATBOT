@@ -1,6 +1,6 @@
 // public_app.js - Logic for the Public Showcase of VYOMA AI
 
-const BACKEND_URL = 'http://127.0.0.1:5000';
+const BACKEND_URL = 'http://127.0.0.1:8000';
 
 document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
@@ -43,12 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // API Call
         try {
-            const formData = new FormData();
-            formData.append('query', query);
-
-            const res = await fetch(`${BACKEND_URL}/api/v1/text/chat`, {
+            const res = await fetch(`${BACKEND_URL}/chat`, {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: query })
             });
 
             if (!res.ok) {
@@ -59,10 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Format response beautifully
             let botReply = '';
-            if (data.intent && data.response) {
-                botReply = data.response;
-            } else if (data.message) {
-                 botReply = data.message;
+            if (data.reply) {
+                botReply = data.reply;
             } else {
                  botReply = JSON.stringify(data);
             }
