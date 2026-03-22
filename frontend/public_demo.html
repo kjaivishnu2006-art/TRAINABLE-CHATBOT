@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VYOMA AI - Next Gen Trainable Platform</title>
+    <!-- Premium Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="public_styles.css">
+</head>
+<body>
+    <!-- Abstract Background Elements -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="ph-fill ph-planet"></i>
+                <span>VYOMA AI</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#demo">Live Demo</a>
+                <a href="index.html" class="btn-studio">Open Studio <i class="ph ph-arrow-right"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="badge">Google Summer of Code 2026 Initiative</div>
+            <h1 class="hero-title">
+                Train AI <br>
+                <span class="gradient-text">Without Limits.</span>
+            </h1>
+            <p class="hero-subtitle">
+                A highly decoupled, multi-modal machine learning infrastructure built to seamlessly connect with MIT App Inventor. Train text, audio, and vision models effortlessly.
+            </p>
+            <div class="hero-actions">
+                <a href="#demo" class="btn primary glow">Try the Engine</a>
+                <a href="https://github.com/kjaivishnu2006-art/VYOMA-AI-Trainable-Chatbot-Interface-and-AI-Components" target="_blank" class="btn outline">View on GitHub</a>
+            </div>
+        </div>
+        
+        <!-- Hero Visual / Dashboard Preview -->
+        <div class="hero-visual glass-panel floating">
+            <div class="window-controls">
+                <span></span><span></span><span></span>
+            </div>
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Data Visualization" class="hero-image" style="opacity:0.6; mix-blend-mode: overlay;"/>
+            <div class="overlay-stats">
+                <div class="stat"><i class="ph ph-cpu"></i> <span>Zero-config ML</span></div>
+                <div class="stat"><i class="ph ph-lightning"></i> <span>Sub-15ms Async API</span></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Feature Section -->
+    <section id="features" class="features-section">
+        <div class="section-header">
+            <h2>Three Pillars of Intelligence</h2>
+            <p>A completely modular approach to on-device and local machine learning.</p>
+        </div>
+        <div class="grid-features">
+            <!-- Feature 1 -->
+            <div class="feature-card glass-panel">
+                <div class="icon-wrapper text-gradient"><i class="ph-fill ph-chats-teardrop"></i></div>
+                <h3>NLP Core</h3>
+                <p>Lightning fast TF-IDF vectors overlaid with Cosine Similarity for seamless contextual matching.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="feature-card glass-panel">
+                <div class="icon-wrapper vision-gradient"><i class="ph-fill ph-eye"></i></div>
+                <h3>Vision Engine</h3>
+                <p>Headless MobileNetV2 architecture compiled over a rapid Support Vector Machine inference layer.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="feature-card glass-panel">
+                <div class="icon-wrapper audio-gradient"><i class="ph-fill ph-waveform"></i></div>
+                <h3>Audio Processing</h3>
+                <p>Advanced feature extraction using Librosa MFCC heuristics bounded by K-Nearest Neighbor mapping.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo / Showcase Section -->
+    <section id="demo" class="demo-section">
+        <div class="demo-content">
+            <h2>Experience the <span class="gradient-text">Chatbot Interface</span></h2>
+            <p>Connects directly to the abstract backend. Try asking about the project architecture, features, or deployment workflow.</p>
+            
+            <div class="live-chat-wrapper glass-panel">
+                <div class="chat-header">
+                    <i class="ph-fill ph-robot"></i>
+                    <div>
+                        <h4>VYOMA Assistant</h4>
+                        <span class="status-indicator">Connected to Backend Engine</span>
+                    </div>
+                </div>
+                <div class="chat-messages" id="public-messages">
+                    <div class="message bot slide-in">
+                        Hello! I am the automated VYOMA AI demo bot. To have me parse your inputs, ensure the backend is running (`python app.py`).
+                    </div>
+                </div>
+                <div class="chat-inputBox">
+                    <input type="text" id="public-query" placeholder="Ask about the platform capabilities..." autocomplete="off"/>
+                    <button id="send-btn" class="send-btn"><i class="ph-bold ph-paper-plane-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="glass-footer">
+        <p>© 2026 VYOMA AI - Google Summer of Code Portfolio Demonstration. Built with ❤️ for MIT App Inventor.</p>
+    </footer>
+
+    <script src="public_app.js"></script>
+</body>
+</html>
